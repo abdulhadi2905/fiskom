@@ -1,0 +1,85 @@
+
+# SIMULASI GERAK PELURU DENGAN HAMBATAN UDARA
+# METODE NUMERIK EULER
+
+# Input data
+v0 = float(input("Masukkan kecepatan awal (m/s): "))
+sudut = float(input("Masukkan sudut elevasi (derajat): "))
+m = float(input("Masukkan massa peluru (kg): "))
+B = float(input("Masukkan koefisien hambatan udara (B): "))
+dt = float(input("Masukkan selang waktu (delta t): "))
+
+# Konstanta gravitasi
+g = 9.8
+
+# Konversi sudut derajat ke radian
+x = sudut * 3.141592653589793 / 180
+
+# Menghitung cosinus dengan deret Taylor
+cosx = 1
+z = -x**2
+suku = 1
+
+for n in range(1, 16):
+    suku = suku * z / ((2*n-1)*(2*n))
+    cosx = cosx + suku
+
+# Menghitung sinus dengan deret Taylor
+sinx = x
+z = -x**2
+suku = x
+
+for n in range(1, 16):
+    suku = suku * z / ((2*n)*(2*n+1))
+    sinx = sinx + suku
+
+# Inisialisasi kecepatan dan posisi
+vx = v0 * cosx
+vy = v0 * sinx
+
+x = 0
+y = 0
+t = 0
+n = 0
+
+print("\nSIMULASI GERAK PELURU DENGAN HAMBATAN UDARA")
+print("--------------------------------------------------------------------------")
+print(f"{'N':<5}{'Waktu':<10}{'Vx':<12}{'Vy':<12}{'V':<12}{'Ax':<12}{'Ay':<12}{'A':<12}")
+
+while y >= 0:
+
+    # Menghitung besar kecepatan
+    v = (vx**2 + vy**2)**0.5
+
+    # Menghitung percepatan akibat hambatan udara
+    ax = -B * v * vx / m
+    ay = -g - B * v * vy / m
+
+    # Menghitung besar percepatan
+    a = (ax**2 + ay**2)**0.5
+
+    # Menampilkan hasil
+    print(f"{n:<5}{t:<10.3f}{vx:<12.5f}{vy:<12.5f}{v:<12.5f}{ax:<12.5f}{ay:<12.5f}{a:<12.5f}")
+
+    # Menghitung posisi berikutnya
+    xbaru = x + vx * dt
+    ybaru = y + vy * dt
+
+    # Menghitung kecepatan berikutnya
+    vxbaru = vx + ax * dt
+    vybaru = vy + ay * dt
+
+    # Memperbarui nilai
+    x = xbaru
+    y = ybaru
+    vx = vxbaru
+    vy = vybaru
+
+    # Memperbarui waktu dan iterasi
+    t = t + dt
+    n = n + 1
+
+print("--------------------------------------------------------------------------")
+print("Jarak horizontal terakhir =", x, "meter")
+print("Waktu simulasi terakhir   =", t, "sekon")
+print("Simulasi selesai")
